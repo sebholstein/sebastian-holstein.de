@@ -1,9 +1,8 @@
 ---
 layout: "../../layouts/BlogPost.astro"
 title: "Dynamic Tag Names in SolidJS"
-date: "2023-01-04T10:44:00+02:00"
+date: "2023-01-07T10:44:00+02:00"
 categories: ["SolidJS"]
-cover: "2021-11-08-go-1.18-features.jpg"
 draft: false
 ---
 
