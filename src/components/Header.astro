@@ -8,7 +8,7 @@ import { SITE_TITLE } from "../config";
     <a
       href="/"
       title={SITE_TITLE}
-      class="xs:w-44 xs:h-8 md:w-52 md:h-10 inline-block max-w-sm"
+      class="xs:w-44 xs:h-8 md:w-52 md:h-10 inline-block max-w-[160px] md:max-w-sm"
       ><img
         src="/images/logo-dark.svg"
         class="hidden dark:inline-block"
@@ -18,16 +18,18 @@ import { SITE_TITLE } from "../config";
     </a>
     <nav class="ml-auto items-center">
       <ul
-        class="flex content-center sm:gap-x-4 md:gap-x-6 items-center justify-center font-mono text-sm"
+        class="flex content-center gap-x-2 md:gap-x-6 items-center justify-center font-mono text-sm"
       >
-        <li><HeaderLink href="/">Blog</HeaderLink></li>
+        <li class="hidden md:inline-block">
+          <HeaderLink href="/">Blog</HeaderLink>
+        </li>
         <li><HeaderLink href="/page/about-me">About</HeaderLink></li>
         <li>
           <HeaderLink href="https://twitter.com/Sebholstein" target="_blank"
             >Twitter</HeaderLink
           >
         </li>
-        <li>
+        <li class="hidden md:inline-block">
           <HeaderLink href="https://github.com/Sebholstein" target="_blank"
             >GitHub</HeaderLink
           >
