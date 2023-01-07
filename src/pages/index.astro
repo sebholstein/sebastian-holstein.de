@@ -1,0 +1,60 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import Body from "../components/Body.astro";
+import { SITE_TITLE, SITE_DESCRIPTION } from "../config";
+
+// Use Astro.glob() to fetch all posts, and then sort them by date.
+const posts = (await Astro.glob("./post/*.{md,mdx}"))
+  .sort(
+    (a, b) =>
+      new Date(b.frontmatter.date).valueOf() -
+      new Date(a.frontmatter.date).valueOf()
+  )
+  .filter((b) => b.frontmatter.draft !== true);
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+  </head>
+  <Body>
+    <Header title={SITE_TITLE} />
+    <main
+      class="container mx-auto px-6 sm:px-6 max-w-3xl prose-headings:font-heading prose-headings:leading-tighter prose-headings:tracking-tighter prose-headings:font-bold prose-a:underline-offset-4 prose-a:decoration-steel-200 dark:prose-a:decoration-steel-500 hover:prose-a:text-primary-600 dark:hover:prose-a:text-primary-400 prose-img:rounded-md prose-img:shadow-lg"
+    >
+      <h2
+        class="text-2xl md:text-4xl font-bold tracking-tight font-heading mb-4"
+      >
+        Blog Posts
+      </h2>
+      <ul>
+        {
+          posts.map((post) => (
+            <li class="mb-3">
+              <a href={post.url} class="hover:text-violet-600">
+                <>
+                  <time
+                    datetime={post.frontmatter.date}
+                    class="text-gray-400 hover:text-violet-600"
+                  >
+                    {
+                      new Date(post.frontmatter.date)
+                        .toISOString()
+                        .split("T")[0]
+                    }
+                  </time>
+                  <span class="text-gray-400">| </span>
+                </>
+                {post.frontmatter.title}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </main>
+    <Footer />
+  </Body>
+</html>

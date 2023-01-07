@@ -1,0 +1,112 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { SITE_TITLE } from "../config";
+import Body from "../components/Body.astro";
+import { Image } from "@astrojs/image/components";
+import profile from "../../public/images/profile.jpg";
+
+export interface Props {
+  content: {
+    title: string;
+    description: string;
+    date?: string;
+    updatedDate?: string;
+    heroImage?: string;
+    categories?: string[];
+    staticPage?: boolean;
+  };
+}
+
+const {
+  content: { title, description, date, staticPage, heroImage, categories },
+} = Astro.props;
+
+const { url } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <BaseHead title={`${title} | ${SITE_TITLE}`} description={description} />
+    <meta rel="canonical" href={new URL(url, Astro.site).pathname} />
+  </head>
+
+  <Body>
+    <Header />
+    <main>
+      <article class="lg:mt-20 mt-6">
+        {heroImage && <img width={720} height={360} src={heroImage} alt="" />}
+        <header class="max-w-3xl mx-auto px-3 md:px-0">
+          <hgroup class="mb-4 pb-4">
+            {
+              !staticPage &&
+                Array.isArray(categories) &&
+                categories.map((c) => (
+                  <span class="text-xs bg-gray-200 dark:bg-gray-700 px-2 mb-2 text-gray-500 dark:text-gray-400 mr-1 inline-block py-0.5 rounded">
+                    {c}
+                  </span>
+                ))
+            }
+            <h1
+              class="text-3xl md:text-4xl font-bold leading-tighter tracking-tight font-heading"
+            >
+              {title}
+            </h1>
+            {
+              !staticPage && (
+                <span class="text-default text-gray-400 inline-block mt-1">
+                  {date && (
+                    <time datetime={date} class="text-gray-400">
+                      {new Date(date).toISOString().split("T")[0]}
+                    </time>
+                  )}{" "}
+                  - Sebastian Holstein
+                </span>
+              )
+            }
+          </hgroup>
+        </header>
+        <div
+          class="container mx-auto px-3 md:px-0 max-w-3xl hover:prose-a:text-pink-500 prose prose-stone dark:prose-invert prose-headings:font-heading prose-headings:leading-tighter prose-headings:tracking-tighter prose-headings:font-bold prose-a:underline-offset-4 prose-a:decoration-steel-200 dark:prose-a:decoration-steel-500 hover:prose-a:text-primary-600 dark:hover:prose-a:text-primary-400 prose-img:rounded-md prose-img:shadow-lg"
+        >
+          <slot />
+        </div>
+      </article>
+      <div
+        class="container mx-auto mt-8 sm:px-6 md:px-0 max-w-3xl flex border-t border-t-gray-600 pt-8"
+      >
+        <div class="mr-5">
+          <Image
+            alt="Sebastian Holstein"
+            src={profile}
+            width={150}
+            height={150}
+            format="avif"
+            class="rounded-full"
+          />
+        </div>
+        <div>
+          <h5>
+            <span
+              class="uppercase block dark:text-gray-500 text-gray-500 text-sm font-bold tracking-wider"
+              >Written By</span
+            >
+            <span class="text-lg font-semibold">Sebastian Holstein</span>
+          </h5>
+          <p class="dark:text-gray-400 text-gray-500 mt-2">
+            Sebastian Holstein is a Software Architect at adesso. He's mainly
+            interested in JavaScript, Web Technologies and Go. You can follow
+            him on Twitter: <a
+              href="https://twitter.com/Sebholstein"
+              class="underline"
+              target="_blank"
+              rel="nofollow">@Sebholstein</a
+            >
+          </p>
+        </div>
+      </div>
+      <Footer />
+    </main>
+  </Body>
+</html>

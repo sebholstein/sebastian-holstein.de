@@ -1,0 +1,38 @@
+---
+import HeaderLink from "./HeaderLink.astro";
+import { SITE_TITLE } from "../config";
+---
+
+<header class="bg-gray-50 dark:bg-[#1A1C29] mb-10">
+  <div class="container h-[61px] flex items-center m-auto px-2 lg:px-8">
+    <a
+      href="/"
+      title={SITE_TITLE}
+      class="xs:w-44 xs:h-8 md:w-52 md:h-10 inline-block max-w-sm"
+      ><img
+        src="/images/logo-dark.svg"
+        class="hidden dark:inline-block"
+        alt={SITE_TITLE}
+      />
+      <img src="/images/logo-light.svg" class="dark:hidden" alt={SITE_TITLE} />
+    </a>
+    <nav class="ml-auto items-center">
+      <ul
+        class="flex content-center sm:gap-x-4 md:gap-x-6 items-center justify-center font-mono text-sm"
+      >
+        <li><HeaderLink href="/">Blog</HeaderLink></li>
+        <li><HeaderLink href="/page/about-me">About</HeaderLink></li>
+        <li>
+          <HeaderLink href="https://twitter.com/Sebholstein" target="_blank"
+            >Twitter</HeaderLink
+          >
+        </li>
+        <li>
+          <HeaderLink href="https://github.com/Sebholstein" target="_blank"
+            >GitHub</HeaderLink
+          >
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>

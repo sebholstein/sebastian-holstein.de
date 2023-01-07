@@ -1,0 +1,87 @@
+---
+layout: "../../layouts/BlogPost.astro"
+date: "2017-07-11T21:56:34+02:00"
+draft: false
+title: "How I built my Angular Hacker News PWA"
+slug: "angular-hacker-news-pwa"
+categories: ["Angular"]
+tags: ["angular", "pwa"]
+cover: "angular-hacker-news.jpg"
+---
+
+import head from "./../../img/angularhn-head.png";
+import arch from "./../../img/angularhn-architecture.png";
+
+import { Image, Picture } from "@astrojs/image/components";
+
+<div style="text-align:center">
+  <Image src={head} height="206" format="avif" alt="Angular + HNPWA" />
+</div>
+
+I recently stumbled upon the **[HNPWA](https://hnpwa.com/)** project from [Addy Osmani](https://twitter.com/addyosmani). I really liked the idea to compare different framework/library solutions with a usable Progressive Web App and achieve the best performance possible. So I thought: let's do this! It'll be a nice little project.
+
+My project isn't offically listed on the _HNPWA_ site, but I created a PR to list it there - hopefully it gets merged soon :-)
+
+Before I dive deeper, here are the links of the PWA:
+
+- **Live version:**  
+  [angularhn.sebastian-mueller.net](https://angularhn.sebastian-mueller.net)
+- Source code:  
+  [SebastianM/angular-hacker-news](https://github.com/SebastianM/angular-hacker-news)
+
+## Architecture
+
+<Image src={arch} format="avif" alt="Architecture overview" />
+
+The application has 3 services:
+
+- A [Caddy](https://caddyserver.com) webserver that serves all static assets via HTTPS and acts also as a reverse proxy.
+- An [Angular Universal](https://universal.angular.io/) server that renders the Angular application on the server.
+- A [Go](https://golang.org) backend that fetches all Hacker News stories from the [Firebase Hacker News API](https://github.com/HackerNews/API) and provides some REST API to get the stories for the Angular frontend.
+
+## Webserver and Reverse Proxy
+
+When you're looking for a fast Webserver that is easy to configure and fetches Let's encrypt certificates, then [Caddy](https://caddyserver.com) is the way to go. I really like the lightweight configuration syntax and the documentation.  
+The Caddy server serves all requests with HTTP/2. To use HTTP/2 push, it's just one line in the configuration. I activated a push for my bundled Angular app to achieve a faster startup time. You can find the configuration of this project [here](https://github.com/SebastianM/angular-hacker-news/blob/master/Caddyfile).
+
+## Server-side rendering with Angular Universal
+
+Setting up Server-side rendering wasn't really a problem. I used [this](https://github.com/angular/angular/tree/0e38bf9de0836c8747851e0998aaca827c8d3c77/aio/content/examples/universal/src) example which worked out of the box and was really easy to intergrate in my build system.
+When a page is rendered on the server, it gets cached in memory. That was important for the overall performance of the app.
+
+## Improving the Angular performance
+
+I used mainly two performance features that are important in a Progressive Web App:
+
+- AOT compilation
+- Lazy Loading of routes
+
+When you use the Angular AOT compiler you can save a lot of kilobytes because the Angular template compiler must not be a part of your JS bundle and the HTML templates get transformed to TypeScript code at build time (and not in the browser when the app starts). That reduces the startup time of your application. So this is a must-have feature for every PWA.
+
+Lazy loading is also really important. It should always be the goal of a web app to ship the JS needed for the currently requested page. With the lazy loading feature of the Angular Router in combination with Webpack, it is really to set it up.
+
+## Module bundling and minifcation for the Angular frontend
+
+First I started with a Rollup-based bundling and did the minification with UglifyJS. The problem I had was "code splitting": Rollup currently doesn't support code splitting and that was an important goal for the project to load only the needed JS code at startup time.
+
+So I rewrote the build system with Webpack 3 and UglifyJS. Webpack supports code splitting out of the box and I knew that it is very easy to set it up. A small downside of the Webpack build system was the bundle size - the bundle was ~10kb bigger.  
+I tried to use the Google Closure Compiler Webpack Plugin but I wasn't able to create a runnable application out of it - I had runtime errors that I couldn't solve. So there's definitely room for improvement in the bundle size. If someone knows how to bundle the app with Google Closure Compiler & advanced optimizations, then please let me know :-)
+
+### Brotli compression
+
+The Brotli compression achieved better compression rates than Gzip in my tests. So I created a [small NodeJS script](https://github.com/SebastianM/angular-hacker-news/blob/master/brotli-compress.js) that creates brotli files for all static assets. The awesome caddy server is able to serve Brotli files when the Browser accepts Brotli encoding a Brotli file is available on disk.
+
+## Hacker News API with Go (Golang)
+
+To show the latest stories from Hacker news I used the Firebase Hacker News API. The Firebase API doesn't provide an aggregated list of stories. You can get all the story IDs but isn't possible to get the full list stories in one request. To achieve a fast response time from a REST API, I wrote an Go backend that fetches all stories from the Firebase API, holds them in memory for faster responses and caches them on disk for faster updates (I run an update of already fetches stories every 6 hours - a check for new stories runs every 30 minutes).  
+The Go backend provides REST APIs that returns only the data that is needed for the page. The responses are encoded via Gzip when the browser supports it.
+
+Every time I write Go, I feel very productive. It was very easy to fetch/cache/serve the stories with the Go SDK. I used nothing else that the standard Go SDK which is IMO the best language SDK I've seen so far. I you haven't used Go yet, you should definitely try it!
+
+## What's next?
+
+As I said, there's room for improvement in the bundle size with Google Closure Compiler. That's definitely something I want to accomplish.
+
+[The current lighthouse score is 91/100](https://www.webpagetest.org/lighthouse.php?test=170711_91_727a71056a80d4dd71e3a2cbd904a6b9&run=3) - but this is mainly due to a buggy HTTP->HTTPS redirect test (I see a lot of handshake errors in the access logs). But I will try to improve some little performance things to achieve an even better TTI time.
+
+I created a pull request for the HNPWA project - so it's currently not an offially listed project - but hopefully my PR gets accepted & merged soon :-)
