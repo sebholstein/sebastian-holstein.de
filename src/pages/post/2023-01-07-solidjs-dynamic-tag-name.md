@@ -14,25 +14,26 @@ To utilize the Dynamic component, consider the following example where we aim to
 
 ```tsx
 interface HeadingProps {
-    level: 1|2|3|4|5|6;
-    children: JSX.Element;
+  level: 1 | 2 | 3 | 4 | 5 | 6;
+  children: JSX.Element;
 }
 
-export Heading: Component<HeadingProps> : (props) => {
-    // here we want to return h1/h2/h3/ base on the level...
-}
+export const Heading: Component<HeadingProps> = (props) => {
+  // here we want to return h1/h2/h3/ base on the level...
+  return <Dynamic component={`h${props.level}`}>{props.children}</Dynamic>;
+};
 ```
 
 The solution is a simple one-liner:
 
 ```tsx
-interface HeadingProps {
+iinterface HeadingProps {
     level: 1|2|3|4|5|6;
     children: JSX.Element;
 }
 
-export Heading: Component<HeadingProps> : (props) => {
-    <Dynamic component={`h${level}`}>{children}</Dynamic>;
+export const Heading: Component<HeadingProps> = (props) => {
+    return <Dynamic component={`h${props.level}`}>{props.children}</Dynamic>;
 }
 ```
 
