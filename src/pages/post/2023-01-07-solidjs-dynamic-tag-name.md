@@ -27,6 +27,9 @@ export const Heading: Component<HeadingProps> = (props) => {
 The solution is a simple one-liner:
 
 ```tsx
+import { Dynamic } from "solid-js/web";
+import { Component, JSX } from "solid-js";
+
 interface HeadingProps {
   level: 1 | 2 | 3 | 4 | 5 | 6;
   children: JSX.Element;
