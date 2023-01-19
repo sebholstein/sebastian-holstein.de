@@ -20,21 +20,21 @@ interface HeadingProps {
 
 export const Heading: Component<HeadingProps> = (props) => {
   // here we want to return h1/h2/h3/ base on the level...
-  return <Dynamic component={`h${props.level}`}>{props.children}</Dynamic>;
+  return <></>;
 };
 ```
 
 The solution is a simple one-liner:
 
 ```tsx
-iinterface HeadingProps {
-    level: 1|2|3|4|5|6;
-    children: JSX.Element;
+interface HeadingProps {
+  level: 1 | 2 | 3 | 4 | 5 | 6;
+  children: JSX.Element;
 }
 
 export const Heading: Component<HeadingProps> = (props) => {
-    return <Dynamic component={`h${props.level}`}>{props.children}</Dynamic>;
-}
+  return <Dynamic component={`h${props.level}`}>{props.children}</Dynamic>;
+};
 ```
 
 This solution makes it easy to create semantic HTML. You can find more details about the <a href="https://www.solidjs.com/docs/latest/api#dynamic" target="_blank">Dynamic component here</a>.
